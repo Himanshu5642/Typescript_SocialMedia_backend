@@ -1,11 +1,13 @@
 import express from 'express';
 import mongoSanitize from 'express-mongo-sanitize';
-import "./modules/environment/environment.ts";
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from "cookie-parser";
+import dotenv from 'dotenv';
 
-const PORT = Number(process.env.port) || 3000;
+dotenv.config();
+
+const PORT = process.env.port || 3000;
 const app = express();
 
 import "./modules/db/mongoose";

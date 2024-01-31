@@ -1,7 +1,7 @@
 {
     "development": {
         "port": "4430",
-        "mongodb_uri": "mongodb://127.0.0.1:27017/socialmedia",
+        "mongodb_uri": "mongodb+srv://yashtariyal30:dGqrf0YSDIyrYt2R@cluster0.yswl2r5.mongodb.net/socialMedia?retryWrites=true&w=majority",
         "secretKey": "secret321",
         "secret_token": "generate some random token! alright",
         "TWILIO_ACCOUNT_SID": "AC60e633201f513fd666f5a7b5463d4935",
@@ -9,7 +9,7 @@
     },
     "production": {
         "port": "4430",
-        "mongodb_uri": "mongodb://127.0.0.1:27017/socialmedia",
+        "mongodb_uri": "mongodb+srv://yashtariyal30:dGqrf0YSDIyrYt2R@cluster0.yswl2r5.mongodb.net/socialMedia?retryWrites=true&w=majority",
         "secretKey": "secret321",
         "secret_token": "generate some random token! alright",
         "TWILIO_ACCOUNT_SID": "AC60e633201f513fd666f5a7b5463d4935",

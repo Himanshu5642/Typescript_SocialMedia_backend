@@ -1,7 +1,6 @@
 const axios = require('axios');
 const { Twilio } = require('twilio');
 const { msg } = require('../config');
-// const env = require("../environment/environment");
 const accountSid: string | undefined = process.env.TWILIO_ACCOUNT_SID;
 const authToken: string | undefined = process.env.TWILIO_AUTH_TOKEN;
 
