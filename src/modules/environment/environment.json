@@ -1,0 +1,18 @@
+{
+    "development": {
+        "port": "4430",
+        "mongodb_uri": "mongodb://127.0.0.1:27017/socialmedia",
+        "secretKey": "secret321",
+        "secret_token": "generate some random token! alright",
+        "TWILIO_ACCOUNT_SID": "AC60e633201f513fd666f5a7b5463d4935",
+        "TWILIO_AUTH_TOKEN": "48b720bb8359c3496b8fa4aa372a2e01"
+    },
+    "production": {
+        "port": "4430",
+        "mongodb_uri": "mongodb://127.0.0.1:27017/socialmedia",
+        "secretKey": "secret321",
+        "secret_token": "generate some random token! alright",
+        "TWILIO_ACCOUNT_SID": "AC60e633201f513fd666f5a7b5463d4935",
+        "TWILIO_AUTH_TOKEN": "48b720bb8359c3496b8fa4aa372a2e01"
+    }
+}
