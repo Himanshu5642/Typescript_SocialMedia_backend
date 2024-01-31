@@ -17,7 +17,7 @@ import { checkError } from "./modules/helpers";
 app.use(mongoSanitize());
 app.enable("trust proxy");
 app.disable("x-powered-by");
-app.use(cors({ origin: "http://localhost:3000", credentials:true }));
+app.use(cors({ origin: "*", credentials:true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
