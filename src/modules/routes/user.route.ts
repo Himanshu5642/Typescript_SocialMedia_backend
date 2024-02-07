@@ -14,7 +14,11 @@ import {
     viewProfile,
     viewProfileById,
     updateAccount,
-    deleteAccount
+    deleteAccount,
+    searchUserHandler,
+    followUnFollowUser,
+    getFollowing,
+    getFollowers
 } from "../controller";
 
 /*--------------------- Login ---------------------*/
@@ -23,14 +27,21 @@ UserRoute.post("/sendOtp", wrapAsync(otp_sender));
 UserRoute.post("/verify", wrapAsync(verifyUserPhone));
 UserRoute.post("/signUp", upload.fields([{ name: 'profile_pic', maxCount: 1 }]), wrapAsync(signUp));
 UserRoute.post("/login", wrapAsync(login));
-UserRoute.post("/logout", wrapAsync(logOut));
+UserRoute.post("/logout", Authentication(User), wrapAsync(logOut));
 
 /*--------------------- Profile ---------------------*/
 
 UserRoute.get("/profile",Authentication(User), wrapAsync(viewProfile));
 UserRoute.get("/userProfile",Authentication(User), wrapAsync(viewProfileById));
+UserRoute.post("/user/search",Authentication(User), wrapAsync(searchUserHandler));
 UserRoute.put("/profile/:id",Authentication(User), wrapAsync(updateAccount));
 UserRoute.delete("/profile/:id",Authentication(User), wrapAsync(deleteAccount));
+
+/*--------------------- Follower ---------------------*/
+
+UserRoute.post("/follow", Authentication(User), wrapAsync(followUnFollowUser));
+UserRoute.get("/following", Authentication(User), wrapAsync(getFollowing));
+UserRoute.get("/followers", Authentication(User), wrapAsync(getFollowers));
 
 
 export { UserRoute };

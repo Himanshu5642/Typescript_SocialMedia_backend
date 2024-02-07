@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../../models";
 import { showUserProfileService } from "../../services";
 import { msg } from "../../config";
+import { Types } from "mongoose";
 
 const viewProfile = async (req: Request, res: Response) => {
   let findUser = await showUserProfileService(req.user._id.toString());
@@ -10,14 +11,55 @@ const viewProfile = async (req: Request, res: Response) => {
 };
 
 const viewProfileById = async (req: Request, res: Response) => {
-  let findUser = await showUserProfileService(req.query.id as string);
+  let findUser = await User.aggregate([
+    {
+      $match: {
+        _id: new Types.ObjectId(req.query.id as string),
+      },
+    },
+    {
+      $lookup: {
+        from: "followers",
+        let: { userId: req.user._id, userSearchingId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$followed_to", "$$userSearchingId"] },
+                  { $eq: ["$followed_by", "$$userId"] },
+                ],
+              },
+            },
+          },
+        ],
+        as: "followings",
+      },
+    },
+    {
+      $addFields: {
+        // following the user - true or false
+        is_following: {
+          $cond: [{ $gt: [{ $size: "$followings" }, 0] }, true, false],
+        },
+      },
+    },
+    {
+      $project: {
+        username: 1,
+        profile_pic: 1,
+        is_activity_status: 1,
+        followers_count: 1,
+        following_count: 1,
+        is_following: 1,
+      },
+    },
+  ]);
   if (!findUser) throw msg.userNotFound;
   return findUser;
 };
 
-const updateAccount = async (
-  req: Request
-) => {
+const updateAccount = async (req: Request) => {
   let userBody = {
     first_name: req.body?.first_name,
     last_name: req.body?.last_name,
@@ -38,9 +80,7 @@ const updateAccount = async (
   return updatedUser;
 };
 
-const deleteAccount = async (
-  req: Request
-) => {
+const deleteAccount = async (req: Request) => {
   const deletedUser = await User.findOneAndUpdate(
     {
       _id: req.user._id,
@@ -52,8 +92,21 @@ const deleteAccount = async (
   return deletedUser;
 };
 
-// const updateProfile = async (req: Request) => {
+const searchUserHandler = async (req: Request) => {
+  const { keyword } = req.body;
+  let find_user = await User.find(
+    { username: { $regex: keyword, $options: "i" }, is_deleted: false },
+    "username profile_pic"
+  ).lean();
 
-// }
+  if (!find_user) throw msg.userNotFound;
+  return find_user;
+};
 
-export { viewProfile, viewProfileById, updateAccount, deleteAccount };
+export {
+  viewProfile,
+  viewProfileById,
+  updateAccount,
+  deleteAccount,
+  searchUserHandler,
+};

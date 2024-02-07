@@ -8,6 +8,7 @@ import {
     newPostCreate,
     getAllPosts,
     getMyPosts,
+    getUserPosts,
     getPostById,
     distinguishedCategoriesPost,
     updatePost,
@@ -30,6 +31,7 @@ import {
 PostRoute.post("/createPost", Authentication(User), upload.fields([{name: 'images', maxCount: 5}]), wrapAsync(newPostCreate));
 PostRoute.get("/allPosts", Authentication(User), wrapAsync(getAllPosts));
 PostRoute.get("/MyPosts", Authentication(User), wrapAsync(getMyPosts));
+PostRoute.get("/userPosts", Authentication(User), wrapAsync(getUserPosts));
 PostRoute.get("/post", Authentication(User), wrapAsync(getPostById));
 PostRoute.get("/post/categories", Authentication(User), wrapAsync(distinguishedCategoriesPost));
 PostRoute.put("/post/:id", Authentication(User), wrapAsync(updatePost));
