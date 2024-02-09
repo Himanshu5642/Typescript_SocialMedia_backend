@@ -11,11 +11,11 @@ export const SendOtp = async (countryCode: number, phone: number, OTP: string) =
             console.log('Sending Indian OTP');
 
             // TODO: Send Indian OTP
-            // await TwilloSendSms(countryCode + phone.toString(), OTP);
+            await TwilloSendSms(countryCode + phone.toString(), OTP);
             return msg.success;
         } else {
             // await sendSlackOtp(OTP);
-            // await TwilloSendSms(countryCode + phone.toString(), OTP);
+            await TwilloSendSms(countryCode + phone.toString(), OTP);
             return msg.success;
         }
     } catch (error) {
@@ -26,6 +26,7 @@ export const SendOtp = async (countryCode: number, phone: number, OTP: string) =
 async function TwilloSendSms(phone: string, otp: string) {
     console.log(phone)
     const client = new Twilio(accountSid, authToken);
+    console.log("client", client)
     const message = await client.messages.create({
         body: `Social - Your OTP is ${otp}`,
         from: "+14692566431",

@@ -107,7 +107,7 @@ UserSchema.virtual('fullName').get(function (this: IUser) {
 
 // Find User By Token
 UserSchema.statics.findByToken = async function (token: string) {
-  var user = this;
+  // var user = this;
   var decoded;
   try {
     decoded = jwt.verify(token, secretKey as string) as JwtCustomPayload;

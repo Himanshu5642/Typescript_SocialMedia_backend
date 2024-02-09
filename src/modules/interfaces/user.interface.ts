@@ -1,6 +1,7 @@
 import { Document, Types, ObjectId } from "mongoose";
 
 export interface IUser extends Document {
+    _id: Types.ObjectId,
     first_name: string,
     last_name: string,
     username: string,
@@ -30,7 +31,8 @@ export interface IUser extends Document {
     country_code: number,
     blocked_users: Array<Types.ObjectId>,
     refer_code: number,
-    referral_code: number
+    referral_code: number,
+    findByToken(token:string): Promise<IUser>
 }
 
 export interface JwtCustomPayload {
