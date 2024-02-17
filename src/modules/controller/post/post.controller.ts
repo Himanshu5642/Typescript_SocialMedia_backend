@@ -14,7 +14,6 @@ const newPostCreate = async (req: Request) => {
   //     thumbnail = await ThumbnailGenerator(trimmedString, res)
   //     console.log('thumbnail', thumbnail)
   // }
-
   let requestFiles = req.files as { [images: string]: Express.Multer.File[] };
   let imageFileName;
   if (requestFiles?.images) imageFileName = requestFiles?.images[0]?.filename;
