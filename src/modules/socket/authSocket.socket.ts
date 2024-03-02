@@ -15,7 +15,7 @@ export const AuthSocket = async (socket: Socket, next: (err?: ExtendedError | un
       token,
       process.env.secret_token as string
     ) as JwtCustomPayload;
-    console.log("decoded token", decoded_token);
+    // console.log("decoded token", decoded_token);
 
     let user = await User.findOne({
       _id: decoded_token,

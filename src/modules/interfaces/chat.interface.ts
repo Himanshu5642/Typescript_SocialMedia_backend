@@ -9,15 +9,22 @@ export interface IConversation extends mongoose.Document {
   groupName: string | undefined;
   groupImage: String | undefined;
   description: String | undefined;
+  online: boolean;
 }
 
 export interface IMessage extends mongoose.Document {
   sender: Types.ObjectId;
-  conversation: Types.ObjectId | string;
+  conversation: Types.ObjectId;
   text: string;
   isMedia: boolean;
   message: string;
   isSeen: boolean;
   seen_by: Types.ObjectId[];
-  online: boolean;
 }
+
+// declare module 'socket.io' {
+//   interface Socket {
+//       user: string;
+//   }
+// }
+

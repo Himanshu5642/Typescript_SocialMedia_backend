@@ -27,13 +27,17 @@ const ConversationSchema = new Schema<IConversation>(
     groupName: String,
     groupImage: {
       type: String,
-      default:
-        "https://pigeonchat.s3.eu-west-3.amazonaws.com/pigeon/1687331586671.jpg", //noImageUrl
+      default: "", //noImageUrl
     },
     description: String,
+    online: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
+    versionKey: false
   }
 );
 

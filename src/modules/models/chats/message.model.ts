@@ -20,16 +20,11 @@ const MessageSchema = new Schema<IMessage>(
       type: Boolean,
       default: false,
     },
-    seen_by: {
-      type: [Schema.Types.ObjectId],
-    },
-    online: {
-      trype: Boolean,
-      default: false,
-    },
+    seen_by: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   {
     timestamps: true,
+    versionKey: false
   }
 );
 

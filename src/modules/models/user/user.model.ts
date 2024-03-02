@@ -1,6 +1,6 @@
-import mongoose, {Schema, Types} from "mongoose";
-import jwt from 'jsonwebtoken';
-import {msg } from '../../config'
+import mongoose, { Schema, Types } from "mongoose";
+import jwt from "jsonwebtoken";
+import { msg } from "../../config";
 import { IUser, JwtCustomPayload } from "../../interfaces";
 
 const secretKey: string | undefined = process.env.secret_token;
@@ -21,7 +21,7 @@ const UserSchema = new Schema<IUser>(
     password: String,
     rememberMe: {
       type: Boolean,
-      default: false
+      default: false,
     },
     country_code: {
       type: Number,
@@ -50,8 +50,8 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      default: 'user',
-      enum: ['SuperAdmin', 'Admin', 'user']
+      default: "user",
+      enum: ["SuperAdmin", "Admin", "user"],
     },
     gender: {
       type: String,
@@ -85,15 +85,16 @@ const UserSchema = new Schema<IUser>(
     },
     is_blocked: {
       type: Boolean,
-      default: false
+      default: false,
     },
     blockedByAdmin: {
       type: Boolean,
-      default: false
+      default: false,
     },
     blocked_users: [{ type: Types.ObjectId, ref: "User" }],
     refer_code: Number,
-    referral_code: Number
+    referral_code: Number,
+    online: { type: Boolean, default: false },
   },
   {
     timestamps: true,
@@ -101,8 +102,8 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
-UserSchema.virtual('fullName').get(function (this: IUser) {
-  return this.first_name + ' ' + this.last_name;
+UserSchema.virtual("fullName").get(function (this: IUser) {
+  return this.first_name + " " + this.last_name;
 });
 
 // Find User By Token
@@ -117,7 +118,7 @@ UserSchema.statics.findByToken = async function (token: string) {
   }
   return User.findOne({
     _id: decoded._id,
-    is_deleted: false
+    is_deleted: false,
   })
     .then((user: IUser | null) => {
       // console.log("userFindByToken", user);

@@ -3,6 +3,8 @@ import { User } from "../../models";
 import { showUserProfileService } from "../../services";
 import { msg } from "../../config";
 import { Types } from "mongoose";
+import { Socket } from "socket.io";
+import { IUser } from "../../interfaces";
 
 const viewProfile = async (req: Request, res: Response) => {
   let findUser = await showUserProfileService(req.user._id.toString());

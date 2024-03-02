@@ -18,7 +18,8 @@ import {
     searchUserHandler,
     followUnFollowUser,
     getFollowing,
-    getFollowers
+    getFollowers,
+    getOnlineUsers
 } from "../controller";
 
 /*--------------------- Login ---------------------*/
@@ -42,6 +43,10 @@ UserRoute.delete("/profile/:id",Authentication(User), wrapAsync(deleteAccount));
 UserRoute.post("/follow", Authentication(User), wrapAsync(followUnFollowUser));
 UserRoute.get("/following", Authentication(User), wrapAsync(getFollowing));
 UserRoute.get("/followers", Authentication(User), wrapAsync(getFollowers));
+
+/*--------------------- OnlineUser ---------------------*/
+
+UserRoute.get("/users/online", Authentication(User), wrapAsync(getOnlineUsers));
 
 
 export { UserRoute };
