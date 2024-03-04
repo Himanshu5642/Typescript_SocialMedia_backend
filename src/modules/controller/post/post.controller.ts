@@ -135,24 +135,24 @@ const getAllPosts = async (req: Request) => {
       },
     },
     { $unwind: "$user" },
-    {
-      $lookup: {
-        from: "categories",
-        let: { category_id: "$category" },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $eq: ["$$category_id", "$_id"],
-              },
-            },
-          },
-          { $project: { name: 1 } },
-        ],
-        as: "category",
-      },
-    },
-    { $unwind: "$category" },
+    // {
+    //   $lookup: {
+    //     from: "categories",
+    //     let: { category_id: "$category" },
+    //     pipeline: [
+    //       {
+    //         $match: {
+    //           $expr: {
+    //             $eq: ["$$category_id", "$_id"],
+    //           },
+    //         },
+    //       },
+    //       { $project: { name: 1 } },
+    //     ],
+    //     as: "category",
+    //   },
+    // },
+    // { $unwind: "$category" },
     { $sort: { createdAt: -1 } },
   ]);
   return posts;
