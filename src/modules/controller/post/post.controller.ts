@@ -3,6 +3,15 @@ import { Follower, HidePost, Post } from "../../models";
 // import { ThumbnailGenerator } from "../../helpers";
 import { msg } from "../../config";
 import { ObjectId, Types } from "mongoose";
+import { firebaseApp } from "../../config";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+} from "firebase/storage";
+
+const storage = getStorage(firebaseApp);
 
 const newPostCreate = async (req: Request) => {
   // if user tried to mention himself remove the user id
@@ -14,18 +23,69 @@ const newPostCreate = async (req: Request) => {
   //     thumbnail = await ThumbnailGenerator(trimmedString, res)
   //     console.log('thumbnail', thumbnail)
   // }
-  let requestFiles = req.files as { [images: string]: Express.Multer.File[] };
-  let imageFileName;
-  if (requestFiles?.images) imageFileName = requestFiles?.images[0]?.filename;
 
+  let requestFiles = req.files as { [images: string]: Express.Multer.File[] };
+  let fileNameToStore;
+
+  if (requestFiles?.images) {
+    fileNameToStore = Date.now() + requestFiles?.images[0].originalname;
+
+    const storageRef = ref(storage, `images/${fileNameToStore}`);
+    const metaData = {
+      contentType: requestFiles?.images[0].mimetype,
+    };
+    const uploadFileToFirebase = uploadBytesResumable(
+      storageRef,
+      requestFiles?.images[0].buffer,
+      metaData
+    );
+
+    uploadFileToFirebase.on(
+      "state_changed",
+      (snapshot: any) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+        switch (snapshot.state) {
+          case "paused":
+            console.log("Upload is paused");
+            break;
+          case "running":
+            console.log("Upload is running");
+            break;
+        }
+      },
+      (error: Error) => {
+        console.log("error on file upload", error);
+      },
+      () => {
+        // Upload completed successfully, now we can get the download URL
+        getDownloadURL(uploadFileToFirebase.snapshot.ref).then(
+          (downloadURL) => {
+            console.log("File available at", downloadURL);
+          }
+        );
+      }
+    );
+  }
   const newPost = await Post.create({
     ...req.body,
-    images: imageFileName ? [imageFileName] : [],
+    images: fileNameToStore ? [fileNameToStore] : [],
     // thumbnail,
     user_id: req.user._id.toString(),
   });
   if (!newPost) throw msg.ErrorOccurredWhilePosting;
   return newPost;
+};
+
+const getFileDownloadURL = async (req: Request) => {
+  const fileRef = ref(storage, req.query.filename as string);
+
+  return getDownloadURL(fileRef)
+    .then((url) => 
+      url
+    )
+    .catch((error) => error);
 };
 
 const getAllPosts = async (req: Request) => {
@@ -343,6 +403,7 @@ const deletePost = async (req: Request) => {
 
 export {
   newPostCreate,
+  getFileDownloadURL,
   getAllPosts,
   getMyPosts,
   getUserPosts,

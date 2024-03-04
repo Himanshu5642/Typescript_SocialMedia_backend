@@ -11,11 +11,11 @@ export const SendOtp = async (countryCode: number, phone: number, OTP: string) =
             console.log('Sending Indian OTP');
 
             // TODO: Send Indian OTP
-            await TwilloSendSms(countryCode + phone.toString(), OTP);
+            // await TwilloSendSms(countryCode + phone.toString(), OTP);
             return msg.success;
         } else {
             // await sendSlackOtp(OTP);
-            await TwilloSendSms(countryCode + phone.toString(), OTP);
+            // await TwilloSendSms(countryCode + phone.toString(), OTP);
             return msg.success;
         }
     } catch (error) {

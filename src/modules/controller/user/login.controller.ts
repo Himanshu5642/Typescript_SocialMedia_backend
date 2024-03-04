@@ -5,6 +5,13 @@ import { global_login, otp_send } from "../../services";
 import { msg } from "../../config";
 import { generateAuthToken } from "../../utils";
 import moment from "moment";
+import { firebaseApp } from "../../config";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+} from "firebase/storage";
 
 const otp_sender = (req: Request, res: Response) => {
   return otp_send(req.body);
@@ -55,9 +62,9 @@ const signUp = async (req: Request, res: Response) => {
   if (password !== cpassword)
     throw "Please provide the same password in both password fields";
 
-//   body.active = true;
-//   body.roleId = 0;
-//   body.role = "Player";
+  //   body.active = true;
+  //   body.roleId = 0;
+  //   body.role = "Player";
   delete req.body.cpassword;
 
   let ciphertext = CryptoJS.AES.encrypt(
@@ -67,13 +74,31 @@ const signUp = async (req: Request, res: Response) => {
   req.body.password = ciphertext;
 
   let requestFiles = req.files as { [images: string]: Express.Multer.File[] };
-  if(requestFiles?.profile_pic) req.body['profile_pic'] = requestFiles?.profile_pic[0].filename;
+  let fileNameToStore; 
+
+  if (requestFiles?.profile_pic) {
+    fileNameToStore = Date.now() + requestFiles?.profile_pic[0].originalname;
+    const storage = getStorage(firebaseApp);
+    const storageRef = ref(storage, `profile/${fileNameToStore}`);
+    const metaData = {
+      contentType: requestFiles?.profile_pic[0].mimetype,
+    };
+    const uploadFileToFirebase = await uploadBytesResumable(
+      storageRef,
+      requestFiles?.profile_pic[0].buffer,
+      metaData
+    );
+    if (!uploadFileToFirebase) throw "Error saving file";
+  }
+
+  req.body["profile_pic"] = fileNameToStore;
+
   const user = await User.findOneAndUpdate(
     { phone: phone },
-    { $set: {...req.body} },
+    { $set: { ...req.body } },
     { new: true }
   );
-  if(!user) throw msg.serverError;
+  if (!user) throw msg.serverError;
   let token = await generateAuthToken(user);
   // res.cookie("AccessToken", token, { maxAge: 86400, httpOnly: true });
   return { user, token, message: msg.success };
@@ -85,19 +110,19 @@ const login = async (req: Request, res: Response) => {
   if (!req.body.password) throw msg.passwordRequired;
 
   let loggedInUser = await global_login(req.body);
-  let present_date: Date = moment().add(10, 'd').toDate();
+  let present_date: Date = moment().add(10, "d").toDate();
   // console.log(present_date)
 
   // res.cookie("AccessToken", loggedInUser.token, { expires: present_date, httpOnly: true });
   return loggedInUser;
-};  
+};
 
 const logOut = async (req: Request, res: Response) => {
-  res.clearCookie('AccessToken', {
+  res.clearCookie("AccessToken", {
     secure: true,
-    sameSite: 'none'
+    sameSite: "none",
   });
   return { msg: "logged out" };
-}
+};
 
 export { otp_sender, verifyUserPhone, signUp, login, logOut };

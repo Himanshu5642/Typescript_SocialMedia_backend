@@ -1,4 +1,4 @@
-import multer from "multer";
+import multer, { memoryStorage } from "multer";
 import { Request } from "express";
 
 const storage = multer.diskStorage({
@@ -10,4 +10,4 @@ const storage = multer.diskStorage({
     }
 })
   
-export const upload = multer({ storage: storage })
+export const upload = multer({ storage: memoryStorage() })
